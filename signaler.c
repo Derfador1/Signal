@@ -32,6 +32,8 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
+	//code found on stackoverflow.com/questions/4809051/prime-number-algorithm
+	//might change this to a different type
 	for(unsigned int j = 0, i = 2; i < SHRT_MAX; i++, j++) {
 		prime[j] = i;
 	}
