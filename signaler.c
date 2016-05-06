@@ -12,9 +12,11 @@ int skipper = 0;
 unsigned int num = 2;
 unsigned int max = UINT_MAX;
 
+int prime_code();
+
 static void sig_handler(int sig_no, siginfo_t *siginfo, void *context)
 {
-	printf("PID: %ld : UID %ld\n", (long)siginfo->si_pid, (long)siginfo->si_uid);
+	printf("PID: %ld ; UID: %ld ; context: %p\n", (long)siginfo->si_pid, (long)siginfo->si_uid, context);
 
 	if (sig_no == SIGINT) {
 		printf("Caught signal %d\n", sig_no);
@@ -81,17 +83,13 @@ int main(int argc, char *argv[])
 		perror("SIGUSR2 error.\n");
 	}
 
+	prime_code();
 
-	/*
-	signal(SIGINT, sig_handler);
+	return EXIT_SUCCESS;
+}
 
-	signal(SIGHUP, sig_handler);
-
-	signal(SIGUSR1, sig_handler);
-
-	signal(SIGUSR2, sig_handler);
-	*/
-
+int prime_code() 
+{
 	int prime = 0;
 
 	while (num < max && num > 1) {
@@ -121,5 +119,6 @@ int main(int argc, char *argv[])
 		num += stepper;
 	}
 
-	return EXIT_SUCCESS;
+	return 0;
 }
+
