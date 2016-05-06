@@ -86,7 +86,7 @@ int args(int argc, char *argv[])
 					return -1;
 				}
 				num = strtoll(optarg, &end, 10);
-				if (end == optarg) {
+				if (end == optarg || num < 2) {
 					fprintf(stderr, "Could not get number\n");
 					return -1;
 				}
@@ -112,7 +112,9 @@ int args(int argc, char *argv[])
 int prime_code() 
 {
 	int prime = 0;
-
+	//code to get prime numbers
+	//https://www.daniweb.com/programming/software-development/threads/255212/
+	//prime-number-using-sqrt
 	while (num < max && num > 1) {
 		while (!prime) {
 			prime = isprime(num);
@@ -147,6 +149,7 @@ static void sig_handler(int sig_no, siginfo_t *siginfo, void *context)
 {
 	printf("PID: %ld ; UID: %ld ; context: %p\n", (long)siginfo->si_pid, (long)siginfo->si_uid, context);
 
+	//used to catch signals needed
 	if (sig_no == SIGINT) {
 		printf("Caught signal %d\n", sig_no);
 		exit(sig_no);
