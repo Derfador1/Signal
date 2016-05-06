@@ -6,6 +6,7 @@
 #include <math.h>
 #include <stdbool.h>
 #include <string.h>
+#include <getopt.h>
 
 int stepper = 1;
 int skipper = 0;
@@ -13,6 +14,7 @@ unsigned int num = 2;
 unsigned int max = UINT_MAX;
 
 int prime_code();
+int args(int argc, char *argv[]);
 
 static void sig_handler(int sig_no, siginfo_t *siginfo, void *context)
 {
@@ -83,9 +85,68 @@ int main(int argc, char *argv[])
 		perror("SIGUSR2 error.\n");
 	}
 
+	if (args(argc, argv) == -1) {
+		fprintf(stderr, "The arguments given are invalid\n");
+		return 1;
+	}
+
 	prime_code();
 
 	return EXIT_SUCCESS;
+}
+
+int args(int argc, char *argv[])
+{
+	//I got help with the opt args part from exsickness from
+	//www.github.com/ExSickness/signals/blob/master/signaler.c
+	int options = -1;
+	while((options = getopt(argc, argv, "r:s:e:")) != -1) {
+		char *end = NULL;
+		
+		switch(options)
+		{
+			case 's':
+				//to check if we are starting from the beginning
+				if(num != 2) {
+					fprintf(stderr, "'s' or 'r' not compatible with each other\n");
+					return -1;
+				}
+				num = strtoll(optarg, &end, 10);
+				if (end == optarg) {
+					fprintf(stderr, "Could not get number");
+					return -1;
+				}
+
+				num += 1;
+				break;
+			case 'r':
+				stepper *= -1;
+				//to check if we are starting from the beginning
+				if(num != 2) {
+					fprintf(stderr, "'s' or 'r' not compatible with each other\n");
+					return -1;
+				}
+				num = strtoll(optarg, &end, 10);
+				if (end == optarg) {
+					fprintf(stderr, "Could not get number\n");
+					return -1;
+				}
+
+				break;
+			case 'e':
+				max = strtoll(optarg, &end, 10);
+				if(end == optarg) {
+					fprintf(stderr, "Could not get specified end number\n");
+					return -1;
+				}
+				break;
+			default:
+				fprintf(stderr, "No flags given\n");
+				return -1;
+		}
+	}
+
+	return 0;
 }
 
 int prime_code() 
