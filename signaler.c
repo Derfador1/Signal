@@ -15,51 +15,8 @@ unsigned int max = UINT_MAX;
 
 int prime_code();
 int args(int argc, char *argv[]);
-
-static void sig_handler(int sig_no, siginfo_t *siginfo, void *context)
-{
-	printf("PID: %ld ; UID: %ld ; context: %p\n", (long)siginfo->si_pid, (long)siginfo->si_uid, context);
-
-	if (sig_no == SIGINT) {
-		printf("Caught signal %d\n", sig_no);
-		exit(sig_no);
-	}
-	else if(sig_no == SIGHUP) {
-		printf("Caught signal %d\n", sig_no);
-		num = 2;
-	}
-	else if(sig_no == SIGUSR1) {
-		printf("Caught signal %d\n", sig_no);
-		skipper = 1;
-	}
-	else if(sig_no == SIGUSR2) {
-		printf("Caught signal %d\n", sig_no);
-		stepper *= -1;
-	}
-	else {
-		//break;
-	}
-}
-
-//https://www.daniweb.com/programming/software-development/threads/255212/
-//prime-number-using-sqrt
-int isprime(int num) 
-{
-	int sq = (int) sqrt(num);
-
-	int i;	
-
-	for (i = 2; i <= sq; i++) {
-		if(num % i == 0) {
-			break;
-		}
-	}
-
-	if (i <= sq) {
-		return 0;
-	}
-	return 1;
-}
+static void sig_handler(int sig_no, siginfo_t *siginfo, void *context);
+int isprime(int num);
 
 int main(int argc, char *argv[])
 {	
@@ -105,6 +62,7 @@ int args(int argc, char *argv[])
 		
 		switch(options)
 		{
+			//use this to specify the start of the next prime number then n
 			case 's':
 				//to check if we are starting from the beginning
 				if(num != 2) {
@@ -119,6 +77,7 @@ int args(int argc, char *argv[])
 
 				num += 1;
 				break;
+			//use this to emit decreasing values from number n
 			case 'r':
 				stepper *= -1;
 				//to check if we are starting from the beginning
@@ -133,6 +92,7 @@ int args(int argc, char *argv[])
 				}
 
 				break;
+			//use this to exit program if a prime number greater then n
 			case 'e':
 				max = strtoll(optarg, &end, 10);
 				if(end == optarg) {
@@ -183,3 +143,47 @@ int prime_code()
 	return 0;
 }
 
+static void sig_handler(int sig_no, siginfo_t *siginfo, void *context)
+{
+	printf("PID: %ld ; UID: %ld ; context: %p\n", (long)siginfo->si_pid, (long)siginfo->si_uid, context);
+
+	if (sig_no == SIGINT) {
+		printf("Caught signal %d\n", sig_no);
+		exit(sig_no);
+	}
+	else if(sig_no == SIGHUP) {
+		printf("Caught signal %d\n", sig_no);
+		num = 2;
+	}
+	else if(sig_no == SIGUSR1) {
+		printf("Caught signal %d\n", sig_no);
+		skipper = 1;
+	}
+	else if(sig_no == SIGUSR2) {
+		printf("Caught signal %d\n", sig_no);
+		stepper *= -1;
+	}
+	else {
+		//break;
+	}
+}
+
+//https://www.daniweb.com/programming/software-development/threads/255212/
+//prime-number-using-sqrt
+int isprime(int num) 
+{
+	int sq = (int) sqrt(num);
+
+	int i;	
+
+	for (i = 2; i <= sq; i++) {
+		if(num % i == 0) {
+			break;
+		}
+	}
+
+	if (i <= sq) {
+		return 0;
+	}
+	return 1;
+}
